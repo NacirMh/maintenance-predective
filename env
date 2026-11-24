@@ -1,0 +1,43 @@
+# PrÃ©diMaint â€” fichier local (gitignorÃ©). Rotation Atlas recommandÃ©e : identifiants exposÃ©s dans un chat.
+
+NODE_ENV=development
+PORT=4000
+API_PREFIX=/api/v1
+
+MONGODB_URI=
+MONGO_URI=mongodb://127.0.0.1:27017/predimaint
+
+JWT_SECRET=remplacer-par-une-cle-longue-aleatoire
+JWT_EXPIRES_IN=8h
+
+CORS_ORIGIN=http://localhost:5173
+CLIENT_URL=http://localhost:5173
+
+MQTT_URL=mqtt://192.168.0.106:1883
+MQTT_BROKER_URL=mqtt://192.168.0.106:1883
+MQTT_USERNAME=
+MQTT_PASSWORD=
+MQTT_CLIENT_ID=predimaint-backend
+
+OFFLINE_TIMEOUT_MS=120000
+MEASUREMENT_RETENTION_DAYS=90
+ALERT_REOPEN_COOLDOWN_MS=300000
+
+SEED_PASSWORD=12345678
+SEED_ON_START=false
+
+ADMIN_BOOTSTRAP_ENABLED=true
+
+# DÃ©veloppement : simulateur autorisÃ©. Production : laisser false sauf test explicite.
+SIMULATION_ENABLED=true
+SIMULATION_INTERVAL_MS=4000
+
+
+
+
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_SECURE=false
+MAIL_USER=bakir.kammoun22@gmail.com
+MAIL_PASSWORD=slsl lbtm nxwt tioy
+MAIL_FROM=bakir.kammoun22@gmail.com
