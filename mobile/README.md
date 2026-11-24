@@ -1,0 +1,95 @@
+# PrédiMaint — application mobile Flutter
+
+L'application reprend le logo violet PrédiMaint et le sous-titre « Maintenance
+intelligente » du dashboard web. Ses boutons principaux noirs en forme de pilule
+et ses contrôles secondaires discrets s'inspirent de la référence iPhone, tandis
+que les écrans et couleurs de marque PrédiMaint restent inchangés. L'icône
+d'application et les écrans de démarrage Android conservent leurs ressources dédiées.
+
+L'interface mobile reprend la maquette de référence : fond clair, cartes blanches
+arrondies, panneau santé bleu marine avec courbe, quatre indicateurs compacts,
+planning mensuel et bouton central « + » dans la navigation. Le détail équipement
+propose les onglets Aperçu, Analyses, Maintenance et Historique. Les couleurs d'alerte
+restent distinctes pour conserver leur signification.
+
+La barre inférieure affiche Accueil, Équipements, Maintenance et Alertes ; le bouton
+central ouvre les destinations secondaires autorisées selon le rôle.
+
+Écrans mobiles disponibles : connexion, tableau de bord, machines et mesures, alertes,
+interventions et compte rendu, notifications, profil modifiable et simulation des
+mesures (administrateur et responsable maintenance). Le changement du mot de passe
+déconnecte ensuite la session pour appliquer la révocation des jetons. Les listes et statistiques
+proviennent de l'API ; les écrans indiquent explicitement les états vides.
+L'administrateur dispose aussi des écrans de gestion des utilisateurs et appareils IoT,
+des paramètres système et des seuils par machine, ainsi que du journal d'audit. Les rôles maintenance et technicien
+voient uniquement les sections de navigation qui leur sont destinées.
+
+Le jeton JWT est stocké avec `flutter_secure_storage`.
+
+```bash
+flutter pub get
+flutter run --dart-define=API_BASE=http://192.168.43.253:4000/api/v1
+```
+
+Cette adresse convient au téléphone physique connecté au même Wi-Fi que le PC.
+Pour l'émulateur Android, utiliser `http://10.0.2.2:4000/api/v1`.
+
+Pour lancer sur un téléphone Android connecté en USB, vérifier d'abord sa détection
+avec `flutter devices`, puis utiliser son identifiant :
+
+```bash
+flutter run -d DEVICE_ID --dart-define=API_BASE=http://192.168.43.253:4000/api/v1
+```
+
+Remplacer `DEVICE_ID` par l'identifiant affiché par `flutter devices`. Si l'adresse
+du PC change, remplacer `192.168.43.253` par sa nouvelle adresse IPv4. Le téléphone
+et le PC doivent être sur le même réseau.
+Le serveur API doit écouter
+sur le réseau local et son port doit être autorisé dans le pare-feu Windows. Le
+trafic HTTP non chiffré est autorisé uniquement pour les builds Android debug ;
+configurer HTTPS pour un build de production.
+
+## Parcours AR depuis un QR
+
+Dans **Assistant AR**, scannez un QR de composant. L'application transmet le
+modèle correspondant à Unity, ouvre la caméra ARCore et place le GLB sur la
+première surface détectée. Touchez le modèle pour afficher ses mesures, seuils
+et alertes; faites glisser dessus pour le tourner et pincez pour le redimensionner.
+Le glissement sur une surface déplace le modèle. Le QR choisit le modèle, mais
+n'est pas lui-même suivi comme marqueur AR.
+
+Pour compiler Android, le projet Unity doit d'abord être exporté dans
+`UnityAR/Builds/AndroidExport/` avec **PrédiMaint AR > Export Android Gradle
+project for Flutter**. Cet export local est utilisé comme module Unity de
+l'application Flutter. La génération n'écrase pas un export existant : renommez
+l'ancien dossier avant d'en produire un nouveau.
+
+Vérifications locales :
+
+```bash
+flutter analyze
+flutter test
+```
+
+Les notifications listées viennent de `GET /api/v1/notifications`. Aucun fournisseur push n'est configuré.
+
+## Assistant AR
+
+L'écran Assistant AR utilise les machines, seuils, mesures et alertes de l'API
+existante. Les mises à jour utilisent les événements Socket.IO authentifiés
+`measurement:new`, `alert:new`, `alert:updated` et `machine:status`.
+
+Le runtime Unity/ARCore est embarqué dans l'application Android. Le scan QR
+choisit le GLB correspondant et ouvre la caméra Unity; ARCore détecte les
+surfaces et place le modèle. Les caractéristiques du capteur sont affichées
+dans la caméra quand le modèle est touché. Cette fonction nécessite un téléphone
+compatible ARCore.
+
+La base de données associe les valeurs à une machine et à des paramètres de
+télémétrie, pas à des capteurs physiques individuels. L'écran n'affirme donc pas
+qu'un composant réel a été détecté par caméra.
+
+Les connexions affichées dans le guide sont les GPIO définis par le firmware.
+Elles ne remplacent pas la vérification des variantes et des tensions des
+modules avant branchement. Le guide complet et les modèles 3D attendent les
+références exactes de la carte ESP32 et des modules DHT22, SW-420 et ACS712.
